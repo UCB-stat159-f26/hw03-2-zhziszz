@@ -1,0 +1,10 @@
+AI Documentation
+
+I used Codex while working on this project.
+
+I used it to check the project instructions, look over the folder structure,
+work through the data download script and plotting notebooks, troubleshoot file
+path and figure-saving issues, and review wording in the README and report.
+
+I wrote all the code and documentation myself. Codex helped me catch a few
+mistakes and double-check things along the way.
