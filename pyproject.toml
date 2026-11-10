@@ -1,0 +1,14 @@
+[build-system]
+requires = ["setuptools>=61"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "tennisage"
+version = "0.1.0"
+description = "Career matches of a tennis player from tennisabstract.com and the age gap plot from HW2"
+readme = "README.md"
+requires-python = ">=3.9"
+dependencies = ["pandas", "matplotlib"]
+
+[project.optional-dependencies]
+test = ["pytest"]
