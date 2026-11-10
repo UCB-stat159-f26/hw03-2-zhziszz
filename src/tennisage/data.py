@@ -15,3 +15,8 @@ def _parse_career_js(text):
     raw = pd.DataFrame(rows).iloc[:, list(COLUMNS)]
     raw.columns = list(COLUMNS.values())
     return raw
+
+
+def _url_name(player):
+    # "serena williams", "Serena Williams", "SerenaWilliams" -> "SerenaWilliams"
+    return "".join(word[0].upper() + word[1:] for word in player.split())
