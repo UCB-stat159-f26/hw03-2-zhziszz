@@ -39,3 +39,23 @@ def _player_info(name):
     fullname = re.search(r"var fullname = '(.*)';", page).group(1)
     dob = re.search(r"var dob = (\d+);", page).group(1)
     return fullname, pd.to_datetime(dob, format="%Y%m%d")
+
+
+def _opponent_age(matches):
+    info = matches["opponent_info"]
+    # men's files have the opponent's age, women's files the birthday
+    if info.str.contains(".", regex=False).any():
+        return pd.to_numeric(info, errors="coerce")
+    dob = pd.to_datetime(info, format="%Y%m%d", errors="coerce")
+    return (matches["date"] - dob).dt.days / 365.25
+
+
+def _clean_matches(raw, player_dob):
+    matches = raw.copy()
+    matches["date"] = pd.to_datetime(matches["date"], format="%Y%m%d")
+    matches["age_player"] = (matches["date"] - player_dob).dt.days / 365.25
+    matches["age_opponent"] = _opponent_age(matches)
+    matches["age_gap"] = matches["age_player"] - matches["age_opponent"]
+    # drop walkovers (like hw2) and matches with no opponent age
+    matches = matches[matches["score"] != "W/O"].dropna(subset=["age_opponent"])
+    return matches.drop(columns="opponent_info").reset_index(drop=True)
