@@ -1,5 +1,6 @@
 import json
 import re
+from urllib.error import HTTPError
 from urllib.request import Request, urlopen
 
 import pandas as pd
@@ -59,3 +60,17 @@ def _clean_matches(raw, player_dob):
     # drop walkovers (like hw2) and matches with no opponent age
     matches = matches[matches["score"] != "W/O"].dropna(subset=["age_opponent"])
     return matches.drop(columns="opponent_info").reset_index(drop=True)
+
+
+def get_career_matches(player):
+    """Career matches of a player (e.g. "serena williams") from tennisabstract.com."""
+    name = _url_name(player)
+    try:
+        js = _download(f"{BASE_URL}/jsmatches/{name}Career.js")
+    except HTTPError:
+        raise ValueError(f"couldn't find '{player}' on tennisabstract.com, "
+                         "check the spelling (e.g. 'Serena Williams')") from None
+    fullname, dob = _player_info(name)
+    matches = _clean_matches(_parse_career_js(js), dob)
+    matches.insert(0, "player", fullname)
+    return matches
